@@ -18,9 +18,11 @@ int main() {
 	/*
 	* uses string stream as essentially a command line that takes words and if they are valid does the appropriate
 	* functions including adding new entries, removing entries, saving, loading, etc
-	* 
-	* will notify if any of your inputs are invalid 
+	*
+	* will notify if any of your inputs are invalid
 	*/
+
+	list.displayDirections();
 	while (!done && std::getline(std::cin, line)) {
 		//getline(cin, line);
 		std::stringstream stream(line);
@@ -28,6 +30,11 @@ int main() {
 		string name;
 		string extra_input;
 		string category;
+		string string_teams;
+		string string_rounds;
+		int teams;
+		int rounds;
+		bool mock_draft = false;
 
 		stream >> word;
 
@@ -35,13 +42,16 @@ int main() {
 
 		if (word == "quit" && stream >> extra_input) {
 			cout << "Error: Too many arguments" << endl;
-			bad_input = true; 
+			bad_input = true;
 		}
 		else if (word == "quit") {
 			done = true;
 		}
 		else if (word == "add") {
-			if (list.add(line.substr(4))) {
+			if (line.length() <= 4) {
+				bad_input = true;
+			}
+			else if (list.add(line.substr(4))) {
 				cout << "Player added" << endl;
 			}
 			else {
@@ -105,15 +115,32 @@ int main() {
 				list.save(name);
 			}
 		}
+		else if (word == "mock" && stream >> string_teams && stream >> string_rounds) {
+			if (stream >> extra_input) {
+				bad_input = true;
+			}
+			else {
+				teams = stoi(string_teams);
+				rounds = stoi(string_rounds);
+				list.takeMockDraft(teams, rounds);
+			}
+		}
+		else if (word == "directions") {
+			if (stream >> extra_input) {
+				bad_input = true;
+			}
+			else {
+				list.displayDirections();
+			}
+		}
 		else {
 			bad_input = true;
 		}
-		if (bad_input) {
+		if (!mock_draft && bad_input) {
 			cout << "Please try again" << endl;
 		}
 		else {
-			cout << endl;
-			list.pubDisplay();
+			cout << "-------------------------------" << endl;
 		}
 
 	}

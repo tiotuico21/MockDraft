@@ -29,6 +29,7 @@ private:
 	int fumbles;
 	int interceptions;
 	double viability;
+	bool taken;
 
 public:
 	Player(string first_name, string last_name, string position, double ff_points,
@@ -48,6 +49,7 @@ public:
 		this->targets = 0;
 		this->fumbles = fumbles;
 		this->interceptions = interceptions;
+		this->taken = false;
 		/*
 		* a weighted calculation to create a uniform way for users to decide what player they should draft at a specific pick
 		*/
@@ -80,6 +82,7 @@ public:
 			this->viability = ff_points + (rushing_yards)+(receiving_yards * 1.05) + (rushing_td * 6) +
 				(receiving_td * 6.25) + (carries)+(targets * 1.25) - fumbles - depth * 200;
 		}
+		this->taken = false;
 	}
 
 	double getViability() {
@@ -93,6 +96,15 @@ public:
 	double getPassingYd() {
 		return passing_yards;
 	}
+
+	bool getStatus() {
+		return taken;
+	}
+
+	void setStatus() {
+		taken = true;
+	}
+
 
 	/*
 	https://stackoverflow.com/questions/29200635/convert-float-to-string-with-precision-number-of-decimal-digits-specified
