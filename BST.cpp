@@ -31,6 +31,7 @@ BST::TreeNode* BST::insert(Player* new_player, TreeNode* root) {
 		cout << "------------------" << endl;
 		cout << player_amount << endl;
 		cout << "------------------" << endl;
+		cout << "hello" << endl;
 		
 	}
 	/*
