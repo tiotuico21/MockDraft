@@ -12,8 +12,8 @@ using namespace std;
 BST::BST() {
 	root = nullptr;
 	mock_draft = nullptr;
-	ranking = new Player * [400];
-	for (int i = 0; i < 400; i++) {
+	ranking = new Player * [LIMIT];
+	for (int i = 0; i < LIMIT; i++) {
 		ranking[i] = nullptr;
 	}
 	player_amount = 0;
@@ -330,21 +330,16 @@ void BST::pubSuccessor(string name) {
 
 //at first didnt cover uniinitalized values and assigned misaligned 
 void BST::removeInArray(string name) {
-	Player** temp = new Player * [100];
 	int temp_index = 0;
-	for (int i = 0; i < 100; i++) {
-		if (ranking[i] != nullptr && ranking[i]->getName() != name) {
-			temp[temp_index] = ranking[i];
-			temp_index++;
+	for (int i = 0; i < player_amount; i++) {
+		if (ranking[i]->getName() == name) {
+			temp_index = i;
+			break;
 		}
 	}
-	while (temp_index < 100) {
-		temp[temp_index] = nullptr;
-		temp_index++;
+	for (int j = temp_index; j < player_amount - 1; j++) {
+		ranking[j] = ranking[j + 1];
 	}
-	delete[] ranking;
-	ranking = temp;
-	player_amount--;
 }
 /*
 * description: removes a specific Node with the string name
@@ -695,6 +690,39 @@ bool BST::add(string line) {
 			}
 
 		}
+		else if (position == "K") {
+			if (stream >> string_ff &&
+				stream >> string_ten &&
+				stream >> string_twenty &&
+				stream >> string_thirty &&
+				stream >> string_forty &&
+				stream >> string_fifty &&
+				stream >> string_fiftyPlus &&
+				stream >> string_miss) {
+
+				if (stream >> extra_input) {
+					good_input = false;
+					return good_input;
+				}
+
+				ff_points = stod(string_ff);
+				ten = stoi(string_ten);
+				twenty = stoi(string_twenty);
+				thirty = stoi(string_thirty);
+				forty = stoi(string_forty);
+				fifty = stoi(string_fifty);
+				fiftyPlus = stoi(string_fiftyPlus);
+				miss = stoi(string_miss);
+
+				Player* new_player = new Player(first_name, last_name, position, ff_points, ten, twenty, thirty, forty, fifty, fiftyPlus, miss);
+				root = insert(new_player, root); 
+				new_player = nullptr;
+			}
+			else {
+				good_input = false;
+			}
+
+		}
 		else {
 			good_input = false;
 		}
@@ -732,8 +760,8 @@ void BST::load(string name) {
 	delete[] ranking;
 	ranking = nullptr;
 	player_amount = 0;
-	ranking = new Player * [100];
-	for (int i = 0; i < 100; i++) {
+	ranking = new Player * [LIMIT];
+	for (int i = 0; i < LIMIT; i++) {
 		ranking[i] = nullptr;
 	}
 
