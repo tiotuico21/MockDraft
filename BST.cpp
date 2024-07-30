@@ -592,6 +592,17 @@ bool BST::add(string line) {
 	string string_interceptions;
 	string extra_input;
 
+	string string_ten;
+	string string_twenty;
+	string string_thirty;
+	string string_forty;
+	string string_fifty;
+	string string_fiftyPlus;
+	string string_miss;
+
+	string string_sacks;
+	string string_points_allowed;
+
 	/*
 	* non string variables to be filled and passed into the Player constructor to add them to the BST
 	*/
@@ -607,6 +618,18 @@ bool BST::add(string line) {
 	int targets;
 	int fumbles;
 	int interceptions;
+
+	int ten;
+	int twenty;
+	int thirty;
+	int forty;
+	int fifty;
+	int fiftyPlus;
+	int miss;
+
+	int sacks;
+	int points_allowed; 
+
 
 	/*
 	* if there a info for a name and position then proceed, if not flag as bad input
@@ -653,7 +676,7 @@ bool BST::add(string line) {
 				good_input = false;
 			}
 		}
-		else if (position == "RB" || position == "WR") {
+		else if (position == "RB" || position == "WR" || position == "TE") {
 			if (stream >> string_depth &&
 				stream >> string_ff &&
 				stream >> string_receiving_yards &&
@@ -716,12 +739,38 @@ bool BST::add(string line) {
 
 				Player* new_player = new Player(first_name, last_name, position, ff_points, ten, twenty, thirty, forty, fifty, fiftyPlus, miss);
 				root = insert(new_player, root); 
+				new_player = nullptr; 
+			}
+			else {
+				good_input = false; 
+			}
+		}
+		else if (position == "DEF") {
+			if (stream >> string_ff &&
+				stream >> string_interceptions &&
+				stream >> string_sacks &&
+				stream >> string_fumbles &&
+				stream >> string_points_allowed) {
+
+				if (stream >> extra_input) {
+					good_input = false;
+					return good_input;
+				}
+
+				ff_points = stod(string_ff);
+				interceptions = stoi(string_interceptions);
+				sacks = stoi(string_fumbles);
+				fumbles = stoi(string_fumbles);
+				points_allowed = stoi(string_points_allowed);
+				
+
+				Player* new_player = new Player(first_name, last_name, position, ff_points, interceptions, sacks, fumbles, points_allowed);
+				root = insert(new_player, root);
 				new_player = nullptr;
 			}
 			else {
 				good_input = false;
 			}
-
 		}
 		else {
 			good_input = false;

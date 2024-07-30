@@ -11,6 +11,7 @@ using namespace std;
 #ifndef BST_H
 #define BST_H
 
+const int LIMIT = 1000;
 class BST {
 private:
 	/*

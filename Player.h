@@ -31,6 +31,21 @@ private:
 	double viability;
 	bool taken;
 
+	int ten;
+	int twenty;
+	int thirty;
+	int forty;
+	int fifty;
+	int fiftyPlus;
+	int miss; 
+
+	
+	int def_interceptions;
+	int sacks;
+	int def_fumbles;
+	int points_allowed;
+
+
 public:
 	Player(string first_name, string last_name, string position, double ff_points,
 		double passing_yards, double rushing_yards, int passing_td, int rushing_td, int fumbles, int interceptions) {
@@ -50,6 +65,19 @@ public:
 		this->fumbles = fumbles;
 		this->interceptions = interceptions;
 		this->taken = false;
+		this->interceptions = 0;
+
+		this->ten = 0;
+		this->twenty = 0;
+		this->thirty = 0;
+		this->forty = 0;
+		this->fifty = 0;
+		this->fiftyPlus = 0;
+		this->miss = 0;
+
+		this->sacks = 0;
+		this->points_allowed = 0;
+
 		/*
 		* a weighted calculation to create a uniform way for users to decide what player they should draft at a specific pick
 		*/
@@ -73,8 +101,17 @@ public:
 		this->targets = targets;
 		this->fumbles = fumbles;
 		this->interceptions = 0;
+		this->ten = 0;
+		this->twenty = 0;
+		this->thirty = 0;
+		this->forty = 0;
+		this->fifty = 0;
+		this->fiftyPlus = 0;
+		this->miss = 0;
+		this->sacks = 0;
+		this->points_allowed = 0;
 
-		if (position == "WR") {
+		if (position == "WR" || position == "TE") {
 			this->viability = ff_points + (receiving_yards)+(rushing_yards * 1.02) + (receiving_td * 6) +
 				(rushing_td * 6.1) + (carries * 1.01) + (targets * 2) - fumbles - depth * 200;
 		}
@@ -83,6 +120,69 @@ public:
 				(receiving_td * 6.25) + (carries)+(targets * 1.25) - fumbles - depth * 200;
 		}
 		this->taken = false;
+	}
+
+	Player(string first_name, string last_name, string position, double ff_points, int ten, int twenty, int thirty, int forty, int fifty, int fiftyPlus, int miss) {
+		this->first_name = first_name;
+		this->last_name = last_name;
+		this->position = position;
+		this->depth = 100;
+		this->ff_points = ff_points;
+		this->passing_yards = 0;
+		this->rushing_yards = 0;
+		this->receiving_yards = 0;
+		this->passing_td = 0;
+		this->rushing_td = 0;
+		this->receiving_td = 0;
+		this->carries = 0;
+		this->targets = 0;
+		this->fumbles = 0; 
+		this->interceptions = 0;
+		this->taken = false;
+		this->ten = ten;
+		this->twenty = twenty;
+		this->thirty = thirty;
+		this->forty = forty;
+		this->fifty = fifty; 
+		this->fiftyPlus = fiftyPlus;
+		this->miss = miss;
+		this->sacks = 0;
+		this->points_allowed = 0;
+
+		this->viability = (1 * ten) + (2 * twenty) + (3 * thirty) + (4 * forty) + (5 * fifty) + (7 * fiftyPlus) - (2 * miss);
+		
+
+	}
+
+	Player(string city, string team, string position, double ff_points, int interceptions, int sacks, int fumbles, int points_allowed) {
+		this->first_name = city;
+		this->last_name = team;
+		this->position = position;
+		this->depth = 100;
+		this->ff_points = ff_points;
+		this->passing_yards = 0;
+		this->rushing_yards = 0;
+		this->receiving_yards = 0;
+		this->passing_td = 0;
+		this->rushing_td = 0;
+		this->receiving_td = 0;
+		this->carries = 0;
+		this->targets = 0;
+		this->taken = false;
+		this->ten = 0;
+		this->twenty = 0;
+		this->thirty = 0;
+		this->forty = 0;
+		this->fifty = 0;
+		this->fiftyPlus = 0;
+		this->miss = 0;
+		this->interceptions = interceptions;
+		this->sacks = sacks;
+		this->fumbles = fumbles;
+		this->points_allowed = points_allowed;
+
+		this->viability = (interceptions * 4) + (sacks * 2) + (fumbles * 4) - (points_allowed * 10);
+
 	}
 
 	double getViability() {
@@ -102,7 +202,7 @@ public:
 	}
 
 	void setStatus() {
-		taken = true;
+		taken = !(taken);
 	}
 
 
@@ -133,7 +233,7 @@ public:
 				<< fumbles << " "
 				<< interceptions;
 		}
-		else {
+		else if (position == "TE" || position == "WR" || position == "RB"){
 			stream << first_name << " "
 				<< last_name << " "
 				<< position << " "
@@ -146,6 +246,30 @@ public:
 				<< carries << " "
 				<< targets << " "
 				<< fumbles;
+		}
+		else if (position == "K") {
+			stream << first_name << " "
+				<< last_name << " "
+				<< position << " "
+				<< ff_points << " "
+				<< ten << " "
+				<< twenty << " "
+				<< thirty << " "
+				<< forty << " "
+				<< fifty << " "
+				<< fifty << " "
+				<< fiftyPlus << " "
+				<< miss << " ";
+		}
+		else {
+			stream << first_name << " "
+				<< last_name << " "
+				<< position << " "
+				<< ff_points << " "
+				<< interceptions << " "
+				<< sacks << " "
+				<< fumbles << " "
+				<< points_allowed; 
 		}
 		return stream.str();
 	}
