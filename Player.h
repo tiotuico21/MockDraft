@@ -45,6 +45,8 @@ private:
 	int def_fumbles;
 	int points_allowed;
 
+	int adp;
+
 
 public:
 	Player(string first_name, string last_name, string position, double ff_points,
@@ -78,10 +80,12 @@ public:
 		this->sacks = 0;
 		this->points_allowed = 0;
 
+		adp = 0;
+
 		/*
 		* a weighted calculation to create a uniform way for users to decide what player they should draft at a specific pick
 		*/
-		this->viability = (ff_points)+(passing_yards * 0.10) + (rushing_yards * 1.01) + (passing_td * 4) + (rushing_td * 8)
+		this->viability = (ff_points * 0.2)+(passing_yards * 0.10) + (rushing_yards * 1.01) + (passing_td * 4) + (rushing_td * 8)
 			- fumbles - interceptions - this->depth * 4;
 	}
 	Player(string first_name, string last_name, string position, int depth, double ff_points, double receiving_yards,
@@ -111,13 +115,16 @@ public:
 		this->sacks = 0;
 		this->points_allowed = 0;
 
+
+		adp = 0;
+
 		if (position == "WR" || position == "TE") {
-			this->viability = ff_points + (receiving_yards)+(rushing_yards * 1.02) + (receiving_td * 6) +
-				(rushing_td * 6.1) + (carries * 1.01) + (targets * 2) - fumbles - depth * 200;
+			this->viability = (ff_points * 0.2) + (receiving_yards)+(rushing_yards * 1.02) + (receiving_td * 6) +
+				(rushing_td * 6.1) + (carries * 1.01) + (targets * 1.25) - fumbles - depth * 200;
 		}
 		else {
-			this->viability = ff_points + (rushing_yards)+(receiving_yards * 1.05) + (rushing_td * 6) +
-				(receiving_td * 6.25) + (carries)+(targets * 1.25) - fumbles - depth * 200;
+			this->viability = ff_points + (rushing_yards)+(receiving_yards * 1.02) + (rushing_td * 6) +
+				(receiving_td * 6.25) + (carries)+(targets * 1.5) - fumbles - depth * 200;
 		}
 		this->taken = false;
 	}
@@ -150,6 +157,9 @@ public:
 		this->points_allowed = 0;
 
 		this->viability = (1 * ten) + (2 * twenty) + (3 * thirty) + (4 * forty) + (5 * fifty) + (7 * fiftyPlus) - (2 * miss);
+
+
+		adp = 0;
 		
 
 	}
@@ -183,6 +193,9 @@ public:
 
 		this->viability = (interceptions * 4) + (sacks * 2) + (fumbles * 4) - (points_allowed * 10);
 
+
+		adp = 0;
+
 	}
 
 	double getViability() {
@@ -203,6 +216,18 @@ public:
 
 	void setStatus() {
 		taken = !(taken);
+	}
+
+	void setADP(int num) {
+		adp = num;
+	}
+
+	void decramentADP() {
+		adp--;
+	}
+
+	int getADP() {
+		return adp;
 	}
 
 
@@ -290,10 +315,10 @@ public:
 	*/
 	void display() {
 		if (position == "QB") {
-			cout << position << " " << first_name << " " << last_name << " " << viability << " " << ff_points << " " << passing_yards << endl;
+			cout << adp << " " << position << " " << first_name << " " << last_name << " " << viability << " " << ff_points << " " << passing_yards << endl;
 		}
 		else {
-			cout << position << " " << first_name << " " << last_name << " " << viability << " " << ff_points << " " << endl;
+			cout << adp << " " << position << " " << first_name << " " << last_name << " " << viability << " " << ff_points << " " << endl;
 		}
 	}
 

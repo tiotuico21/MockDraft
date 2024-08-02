@@ -38,6 +38,7 @@ BST::TreeNode* BST::insert(Player* new_player, TreeNode* root) {
 		root->right = nullptr;
 		ranking[player_amount] = new_player;
 		cout << player_amount << endl;
+		root->player->setADP(player_amount);
 		player_amount++;
 	}
 	/*
@@ -99,6 +100,7 @@ void BST::rankingDisplay() {
 	int i = 0;
 	cout << "Player ranking" << endl;
 	while (ranking[i] != nullptr) {
+		cout << i << "| ";
 		ranking[i]->display();
 		i++;
 	}
@@ -337,9 +339,18 @@ void BST::removeInArray(string name) {
 			break;
 		}
 	}
+
+	if (player_amount - 1 == 0 || player_amount - 1 == 1) {
+		ranking[player_amount - 1] = nullptr;
+		return;
+	}
 	for (int j = temp_index; j < player_amount - 1; j++) {
+		ranking[j + 1]->decramentADP();
 		ranking[j] = ranking[j + 1];
 	}
+
+	ranking[player_amount - 1] = nullptr;
+	
 }
 /*
 * description: removes a specific Node with the string name
@@ -555,6 +566,7 @@ void BST::pubRemove(string name) {
 	cout << "Removing " << name << endl;
 	removeInArray(name);
 	root = remove(name, root);
+	player_amount--;
 }
 
 /*
@@ -783,6 +795,244 @@ bool BST::add(string line) {
 
 }
 
+void BST::assist() {
+	string first_name;
+	string last_name;
+	string position;
+	double ff_points;
+	
+	/*
+
+
+	
+
+
+	*/
+
+	cout << "First Name: ";
+	cin >> first_name;
+	cout << "Last Name: ";
+	cin >> last_name;
+
+	do {
+		cout << "Position: ";
+		cin >> position;
+	} while (position != "QB" &&
+		position != "RB" &&
+		position != "WR" &&
+		position != "TE" &&
+		position != "K" &&
+		position != "DEF");
+
+	do {
+		cout << "Fantasy Football Points: ";
+		cin >> ff_points;
+	} while (ff_points < 0);
+
+	Player* new_player = nullptr;
+	if (position == "QB") {
+		new_player = qbAssist(first_name, last_name, ff_points);
+	}
+	else if (position == "RB" || position == "WR" || position == "TE") {
+		new_player = offenseAssist(first_name, last_name, position, ff_points);
+	}
+	else if (position == "K") {
+		new_player = kickerAssist(first_name, last_name, ff_points);
+	}
+	else {
+		new_player = defenseAssist(first_name, last_name, ff_points);
+	}
+	root = insert(new_player, root);
+}
+
+Player* BST::qbAssist(string first_name, string last_name, double ff_points) {
+
+	double passing_yards;
+	double rushing_yards;
+	int passing_td;
+	int rushing_td;
+	int fumbles;
+	int interceptions;
+
+	do {
+		cout << "Passing Yards: ";
+		cin >> passing_yards;
+	} while (passing_yards < 0);
+
+
+	do {
+		cout << "Rushing Yards: ";
+		cin >> rushing_yards;
+	} while (rushing_yards < 0);
+
+	do {
+		cout << "Passing Touchdowns: ";
+		cin >> passing_td;
+	} while (rushing_yards < 0);
+
+	do {
+		cout << "Rushing Touchdowns: ";
+		cin >> rushing_td;
+	} while (rushing_td < 0);
+
+	do {
+		cout << "Fumbles: ";
+		cin >> fumbles;
+	} while (fumbles < 0);
+
+	do {
+		cout << "Interceptions: ";
+		cin >> interceptions;
+	} while (interceptions < 0);
+
+	Player* new_player = new Player(first_name, last_name, "QB", ff_points, passing_yards, rushing_yards, passing_td, rushing_td, fumbles, interceptions);
+
+	return new_player;
+}
+
+Player* BST::offenseAssist(string first_name, string last_name, string position, double ff_points) {
+	int depth;
+	double receiving_yards;
+	double rushing_yards;
+	int receiving_td;
+	int rushing_td;
+	int carries;
+	int targets;
+	int fumbles;
+
+	do {
+		cout << "Depth Position: ";
+		cin >> depth;
+	} while (depth < 0);
+
+	do {
+		cout << "Receiving Yards: ";
+		cin >> receiving_yards;
+	} while (receiving_yards < 0);
+
+	do {
+		cout << "Rushing Yards: ";
+		cin >> rushing_yards;
+	} while (rushing_yards < 0);
+
+	do {
+		cout << "Receiving Touchdowns ";
+		cin >> receiving_td;
+	} while (receiving_td < 0);
+
+	do {
+		cout << "Rushing Touchdowns: ";
+		cin >> rushing_td;
+	} while (rushing_td < 0);
+
+	do {
+		cout << "Carries: ";
+		cin >> carries;
+	} while (carries < 0);
+
+	do {
+		cout << "Targets: ";
+		cin >> targets;
+	} while (targets < 0);
+
+	do {
+		cout << "Fumbles: ";
+		cin >> fumbles;
+	} while (fumbles < 0);
+
+	Player* new_player = new Player(first_name, last_name, position, depth, ff_points, receiving_yards, rushing_yards, receiving_td, rushing_td, carries, targets, fumbles);
+
+	return new_player;
+
+}
+
+Player* BST::kickerAssist(string first_name, string last_name, double ff_points) {
+	int ten;
+	int twenty;
+	int thirty;
+	int forty;
+	int fifty;
+	int fifty_plus;
+	int miss;
+
+	do {
+		cout << "Kicks Made From the Ten Yard Line: ";
+		cin >> ten;
+
+	} while (ten < 0);
+
+	do {
+		cout << "Kicks Made From the Twenty Yard Line: ";
+		cin >> twenty;
+
+	} while (twenty < 0);
+
+	do {
+		cout << "Kicks Made From the Thirty Yard Line: ";
+		cin >> thirty;
+
+	} while (thirty < 0);
+
+	do {
+		cout << "Kicks Made From the Forty Yard Line: ";
+		cin >> forty;
+
+	} while (forty < 0);
+
+	do {
+		cout << "Kicks Made From the Fifty Yard Line: ";
+		cin >> fifty;
+
+	} while (fifty < 0);
+
+	do {
+		cout << "Kicks Made From Beyond The Fifty Yard Line: ";
+		cin >> fifty_plus;
+
+	} while (fifty_plus < 0);
+
+	do {
+		cout << "Kicks Missed: ";
+		cin >> miss;
+
+	} while (miss < 0);
+
+	Player* new_player = new Player(first_name, last_name, "K", ff_points, ten, twenty, thirty, forty, fifty, fifty_plus, miss);
+	return new_player;
+
+}
+
+Player* BST::defenseAssist(string city, string team, double ff_points) {
+	int interceptions;
+	int sacks;
+	int fumbles;
+	int points_allowed;
+
+	do {
+		cout << "Interceptions: ";
+		cin >> interceptions;
+	} while (interceptions < 0);
+
+	do {
+		cout << "Sacks: ";
+		cin >> sacks;
+	} while (sacks < 0);
+
+	do {
+		cout << "Fumbles: ";
+		cin >> fumbles;
+	} while (fumbles < 0);
+
+	do {
+		cout << "Points Allowed: ";
+		cin >> points_allowed;
+	} while (points_allowed < 0);
+
+	Player* new_player = new Player(city, team, "DEF", ff_points, interceptions, sacks, fumbles, points_allowed);
+	return new_player; 
+}
+
+
 /*
 * description: public function to load the a txt file of data into a new BST
 * pre condition: must be a valid string name of a file in your system already
@@ -872,6 +1122,7 @@ int BST::partition(string category, int beg, int end) {
 	* the correct spot
 	*/
 	Player* p = ranking[beg];
+	int p_adp = ranking[beg]->getADP();
 	int m = beg;
 
 	/*
@@ -886,23 +1137,40 @@ int BST::partition(string category, int beg, int end) {
 			if (ranking[k]->getViability() >= p->getViability()) {
 				m++;
 				Player* temp = ranking[m];
+				int temp_adp = ranking[m]->getADP();
+
+				ranking[m]->setADP(ranking[k]->getADP());
 				ranking[m] = ranking[k];
+			
+				ranking[k]->setADP(temp_adp);
 				ranking[k] = temp;
+				
 			}
 		}
 		else if (category == "ff") {
 			if (ranking[k]->getFFPoints() >= p->getFFPoints()) {
 				m++;
+				int temp_adp = ranking[m]->getADP();
 				Player* temp = ranking[m];
+			
+				ranking[m]->setADP(ranking[k]->getADP());
 				ranking[m] = ranking[k];
+				
+				ranking[k]->setADP(temp_adp);
 				ranking[k] = temp;
+				
 			}
 		}
 		else if (category == "pyd") {
 			if (ranking[k]->getPassingYd() >= p->getPassingYd()) {
 				m++;
+				int temp_adp = ranking[m]->getADP();
 				Player* temp = ranking[m];
+			
+				ranking[m]->setADP(ranking[k]->getADP());
 				ranking[m] = ranking[k];
+			
+				ranking[k]->setADP(temp_adp);
 				ranking[k] = temp;
 			}
 		}
@@ -918,8 +1186,12 @@ int BST::partition(string category, int beg, int end) {
 	* swap element p and element on index m now to put element p in its correct spot where
 	* everything to left will be greater and everything to the right wil be less
 	*/
+	ranking[beg]->setADP(ranking[m]->getADP());
 	ranking[beg] = ranking[m];
+
+	ranking[m]->setADP(p_adp);
 	ranking[m] = p;
+	
 
 	/*
 	* return this index m where the element is in the correct spot
@@ -937,9 +1209,15 @@ int BST::partition(string category, int beg, int end) {
 */
 int BST::randomizedPartition(string category, int beg, int end) {
 	int pos = beg + rand() % (end - beg + 1);
+	int temp_adp = ranking[beg]->getADP();
 	Player* temp = ranking[beg];
+	
+	ranking[beg]->setADP(ranking[pos]->getADP());
 	ranking[beg] = ranking[pos];
+	
+	ranking[pos]->setADP(temp_adp);
 	ranking[pos] = temp;
+	
 	return partition(category, beg, end);
 
 }

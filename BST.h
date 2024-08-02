@@ -2,6 +2,7 @@
 //BST class to be used for general mock draft functions 
 //allows you to store player data in a binary search tree structure and mock draft players
 
+//fix headers
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -84,6 +85,17 @@ public:
 	void displayDraft(int teams, int rounds);
 
 	void displayDirections();
+
+	void assist();
+
+	Player* qbAssist(string first_name, string last_name, double ff_points);
+
+	Player* offenseAssist(string first_name, string last_name, string position, double ff_points);
+
+	Player* kickerAssist(string first_name, string last_name, double ff_points);
+
+	Player* defenseAssist(string city, string team, double ff_points);
+
 
 	~BST();
 

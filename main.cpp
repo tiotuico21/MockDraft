@@ -58,6 +58,14 @@ int main() {
 				bad_input = true;
 			}
 		}
+		else if (word == "assist") {
+			if (!(stream >> extra_input)) {
+				list.assist();
+			}
+			else {
+				bad_input = true;
+			}
+		}
 		else if (word == "print") {
 			if (!(stream >> extra_input)) {
 				list.pubDisplay();
