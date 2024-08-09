@@ -50,7 +50,7 @@ private:
 
 public:
 	Player(string first_name, string last_name, string position, double ff_points,
-		double passing_yards, double rushing_yards, int passing_td, int rushing_td, int fumbles, int interceptions) {
+		double passing_yards, double rushing_yards, int passing_td, int rushing_td, int fumbles, double interceptions) {
 		this->first_name = first_name;
 		this->last_name = last_name;
 		this->position = position;
@@ -67,8 +67,6 @@ public:
 		this->fumbles = fumbles;
 		this->interceptions = interceptions;
 		this->taken = false;
-		this->interceptions = 0;
-
 		this->ten = 0;
 		this->twenty = 0;
 		this->thirty = 0;
@@ -195,6 +193,119 @@ public:
 
 
 		adp = 0;
+
+		pros = vector<string>(20);
+		cons = vector<string>(20);
+		avg = vector<string>(20);
+
+		double playerPerScore = 0;
+		evalMade = false;
+
+
+	}
+
+
+	void playerEval() {
+		if (evalMade) {
+			displayProsAndCons(); 
+			return;
+		}
+		if (position == "QB") {
+			qbEval();
+			evalMade = true;
+			displayProsAndCons(); 
+		}
+		else {
+			cout << "Not available at this time" << endl; 
+		}
+	}
+	void qbEval() 
+		double passing_yards_eval_score = getEvalScore(QB_PYD_LOWERBOUND, QB_FF_UPPERBOUND, passing_yards);
+		double rushing_yards_eval_score = getEvalScore(QB_RUSHYD_LOWERBOUND, QB_RUSHYD_UPPERBOUND, rushing_yards);
+		double passing_td_eval_score = getEvalScore(QB_PTD_LOWERBOUND, QB_PTD_UPPER_BOUND, passing_td);
+		double rushing_td_eval_score = getEvalScore(QB_RUSHTD_LOWERBOUND, QB_RUSHTD_UPPERBOUND, rushing_td);
+		double fumbles_eval_score = getEvalScore(QB_FUMBLES_LOWERBOUND, QB_FUMBLES_UPPERBOUND, fumbles);
+		double interceptions_eval_score = getEvalScore(QB_INTERCEPTIONS_LOWERBOUND, QB_INTERCEPTIONS_UPPERBOUND, interceptions);
+
+		playerPerfScore = passing_td_eval_score + rushing_yards_eval_score + passing_td_eval_score + rushing_td_eval_score - (fumbles_eval_score + interceptions_eval_score);
+
+		insertProsAndCons(passing_yards_eval_score, "Passing Yards");
+		insertProsAndCons(rushing_yards_eval_score, "Rushing Yards");
+		insertProsAndCons(passing_td_eval_score, "Passing Touchdowns");
+		insertProsAndCons(rushing_td_eval_score, "Rushing Touchdowns");
+		insertProsAndConsException(fumbles_eval_score, "Fumbles");
+		insertProsAndConsException(interceptions_eval_score, "Interceptions");
+
+
+	}
+	void insertProsAndCons(double score, string category) {
+		if (score > 0) {
+			pros.push_back(category);
+		}
+		else if (scores < 0) {
+			cons.push_back(category);
+		}
+		else {
+			avg.push_back(category);
+		}
+	}
+
+	void insertProsAndConsException(double score, string category) {
+		if (score > 0) {
+			cons.push_back(category);
+		}
+		else if (score < 0) {
+			pros.push_back(category);
+		}
+		else {
+			avg.push_back(category);
+		}
+	}
+
+	double getEvalScore(int lower_bound, int upper_bound, int stat) {
+		if (stat <= upper_bound && stat >= lower_bound) {
+			return 0;
+		}
+		else if (stat > upper_bound) {
+			return (stat - upper_bound) * 0.1;
+		}
+		else {
+			return (stat - lower_bound) * 0.1;
+		}
+	}
+
+	double getEvalScore(double lower_bound, double upper_bound, double stat) {
+		if (stat <= upper_bound && stat >= lower_bound) {
+			return 0;
+		}
+		else if (stat > upper_bound) {
+			return (stat - upper_bound) * 0.1;
+		}
+		else {
+			return (stat - lower_bound) * 0.1;
+		}
+	}
+
+	void displayProsAndCons() {
+		count << "Pros" << endl;
+		for (int i = 0; i < (int) pros.size(); i++) {
+			cout << pros[i] << endl;
+		}
+		cout << endl;
+		cout << "Cons" << endl;
+
+		for (int i = 0; i < (int) cons.size(); i++) {
+			cout << cons[i] << endl;
+		}
+		cout << endl;
+
+		cout << endl;
+		cout << "Avg" << endl;
+
+		for (int i = 0; i < (int) avg.size(); i++) {
+			cout << avg[i] << endl;
+		}
+		cout << endl;
 
 	}
 
