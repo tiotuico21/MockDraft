@@ -96,6 +96,10 @@ public:
 
 	Player* defenseAssist(string city, string team, double ff_points);
 
+	string adpEval(int adpDifference);
+
+	void displayPlayerProsAndCons(string last_name);
+
 
 	~BST();
 

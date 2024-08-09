@@ -66,6 +66,14 @@ int main() {
 				bad_input = true;
 			}
 		}
+		else if (word == "p&c" && stream >> name) {
+			if (!(stream >> extra_input)) {
+				list.displayPlayerProsAndCons(name);
+			}
+			else {
+				bad_input = true;
+			}
+		}
 		else if (word == "print") {
 			if (!(stream >> extra_input)) {
 				list.pubDisplay();

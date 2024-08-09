@@ -599,6 +599,7 @@ bool BST::add(string line) {
 	string string_rushing_td;
 	string string_receiving_td;
 	string string_carries;
+	string string_receptions;
 	string string_targets;
 	string string_fumbles;
 	string string_interceptions;
@@ -627,6 +628,7 @@ bool BST::add(string line) {
 	int rushing_td;
 	int receiving_td;
 	int carries;
+	int receptions; 
 	int targets;
 	int fumbles;
 	int interceptions;
@@ -696,6 +698,7 @@ bool BST::add(string line) {
 				stream >> string_receiving_td &&
 				stream >> string_rushing_td &&
 				stream >> string_carries &&
+				stream >> string_receptions &&
 				stream >> string_targets &&
 				stream >> string_fumbles) {
 
@@ -711,10 +714,11 @@ bool BST::add(string line) {
 				receiving_td = stoi(string_receiving_td);
 				rushing_td = stoi(string_rushing_td);
 				carries = stoi(string_carries);
+				receptions = stoi(string_receptions); 
 				targets = stoi(string_targets);
 				fumbles = stoi(string_fumbles);
 
-				Player* new_player = new Player(first_name, last_name, position, depth, ff_points, receiving_yards, rushing_yards, receiving_td, rushing_td, carries, targets, fumbles);
+				Player* new_player = new Player(first_name, last_name, position, depth, ff_points, receiving_yards, rushing_yards, receiving_td, rushing_td, carries, receptions, targets, fumbles);
 
 				root = insert(new_player, root);
 
@@ -897,6 +901,7 @@ Player* BST::offenseAssist(string first_name, string last_name, string position,
 	int receiving_td;
 	int rushing_td;
 	int carries;
+	int receptions; 
 	int targets;
 	int fumbles;
 
@@ -936,11 +941,16 @@ Player* BST::offenseAssist(string first_name, string last_name, string position,
 	} while (targets < 0);
 
 	do {
+		cout << "Receptions: ";
+		cin >> receptions;
+	} while (receptions < 0);
+
+	do {
 		cout << "Fumbles: ";
 		cin >> fumbles;
 	} while (fumbles < 0);
 
-	Player* new_player = new Player(first_name, last_name, position, depth, ff_points, receiving_yards, rushing_yards, receiving_td, rushing_td, carries, targets, fumbles);
+	Player* new_player = new Player(first_name, last_name, position, depth, ff_points, receiving_yards, rushing_yards, receiving_td, rushing_td, carries, receptions, targets, fumbles);
 
 	return new_player;
 
@@ -1264,6 +1274,8 @@ void BST::sortByViabilityHelper(string category, int beg, int end) {
 * post condition: displays a mock draft of the choices you made and the other AI ones
 */
 void BST::takeMockDraft(int teams, int rounds) {
+
+	int adpDifference = 0;
 	/*
 	* allocates memory for 2D array of player pointers
 	*/
@@ -1279,6 +1291,7 @@ void BST::takeMockDraft(int teams, int rounds) {
 	*/
 	bool duplicate = false;
 	bool invalid = false;
+	bool proscons = false; 
 	string player_name;
 	TreeNode* tree_pick = nullptr;
 	sortByViability("v");
@@ -1308,7 +1321,23 @@ void BST::takeMockDraft(int teams, int rounds) {
 					cin >> player_name;
 					cout << endl;
 					tree_pick = search(player_name, root);
-					if (tree_pick == nullptr) {
+					if (player_name == "pros&cons") {
+						do {
+							cout << "Input player name for pros and cons" << endl;
+							cin >> player_name;
+							if (search(player_name, root) == nullptr) {
+								invalid = true;
+							}
+							else {
+								tree_pick = search(player_name, root);
+								invalid = false;
+							}
+						} while (invalid == true);
+
+						tree_pick->player->playerEval();
+						proscons = true;
+					}
+					else if (tree_pick == nullptr) {
 						invalid = true;
 					}
 					else if (tree_pick->player->getStatus() == true) {
@@ -1317,11 +1346,19 @@ void BST::takeMockDraft(int teams, int rounds) {
 					else {
 						duplicate = false;
 						invalid = false;
+						proscons = false; 
 						mock_draft[r][t] = tree_pick->player;
 						tree_pick->player->setStatus();
+
+						int roundADPDifference = picks - tree_pick->player->getADP();
+						adpDifference += roundADPDifference;
 						picks++;
+
+
+
+
 					}
-				} while (invalid == true || duplicate == true);
+				} while (invalid == true || duplicate == true || proscons == true);
 
 			}
 			else {
@@ -1345,12 +1382,28 @@ void BST::takeMockDraft(int teams, int rounds) {
 		* displays what the other teams picked after each round
 		*/
 		displayDraft(teams, rounds);
-	}
 
+
+	}
+	string message = adpEval(adpDifference);
+	cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
+	cout << message << endl;
+	cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
+
+
+	for (int i = 0; i < teams; i++){
+		mock_draft[i][0]->display();
+		mock_draft[i][0]->playerEval(); 
+		cout << "~~~~~~~~~~~~" << endl;
+	}
 	/*
 	* deallocates the 2D array being careful not to delete the pointers
 	*/
-
+	for (int i = 0; i < teams; i++) {
+		for (int j = 0; j < rounds; j++) {
+			mock_draft[i][j]->setStatus();
+		}
+	}
 	for (int i = 0; i < teams; i++) {
 		delete[] mock_draft[i];
 	}
@@ -1358,6 +1411,25 @@ void BST::takeMockDraft(int teams, int rounds) {
 
 	mock_draft = nullptr;
 
+}
+
+string BST::adpEval(int adpDifference) {
+	string message;
+	if (adpDifference < 0) {
+		message = "It seems you were making a lot of picks earlier than where they usually get drafted. This is not necessarily bad but consider what purpose you had for some of those decisions";
+	}
+	else if (adpDifference >= 0 && adpDifference <= 5) {
+		message = "You picked generally within everyone's usual draft position but do consider next time to take risks and mold a team based on what YOU need not what the crowd has done";
+	}
+	else {
+		message = "You created a fantastic draft, not taking any unnecessary risks and taking full advantage of players your other opponents for some reason passed on"; 
+	}
+	return message;
+}
+
+void BST::displayPlayerProsAndCons(string name) {
+	TreeNode* playerNode = search(name, root);
+	playerNode->player->playerEval();
 }
 
 /*
