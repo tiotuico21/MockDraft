@@ -245,12 +245,12 @@ public:
 		adp = 0;
 
 		if (position == "WR" || position == "TE") {
-			this->viability = (ff_points * 0.2) + (receiving_yards)+(rushing_yards * 1.02) + (receiving_td * 6) +
-				(rushing_td * 6.1) + (carries * 1.01) + (receptions * 1.50) + (targets * 1.25) - fumbles - depth * 200;
+			this->viability = (ff_points) + (receiving_yards)+(rushing_yards * 1.02) + (receiving_td * 6) +
+				(rushing_td * 6.3) + (carries * 1.3) + (receptions * 1.50) + (targets * 1.25) - fumbles - depth * 200;
 		}
 		else {
 			this->viability = ff_points + (rushing_yards)+(receiving_yards * 1.02) + (rushing_td * 6) +
-				(receiving_td * 6.25) + (carries)+(targets * 1.5) - fumbles - depth * 200;
+				(receiving_td * 6.25) + (carries * 0.01) + (targets * 1.3) + (receptions * 1.6) - fumbles - depth * 200;
 		}
 		this->taken = false;
 
