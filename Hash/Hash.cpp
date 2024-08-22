@@ -193,7 +193,6 @@ void Hash::rehash() {
 	
 	size = new_size;
 
-	display();
 }
 
 Player* Hash::qbAssist(string first_name, string last_name, double ff_points) {
@@ -253,9 +252,7 @@ void Hash::display() {
 	}
 }
 
-
-
-Hash::~Hash() {
+void Hash::destroy() {
 	for (int i = 0; i < size; i++) {
 		if (playerDatabase[i] == nullptr) {
 			continue;
