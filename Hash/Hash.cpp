@@ -62,9 +62,21 @@ int Hash::hashName(vector<HashNode*> database, string name, int hash_size) {
 	return result;
 }
 
+/*
+* description: Adds a new Hash Node to the HashTable in the correct position while creating debug messages of whether rehashing has happened and displaying the real size
+* pre condition: Must have a valid player pointer
+* post condition: HashNode added into hash table
+*/
 void Hash::insert(Player* new_player) {
+	/*
+	* increase the real size allowing us to then evaluate if needed to rehash
+	*/
 	real_size++;
 
+
+	/*
+	* cast real size and the size of the table as doubles so we can do decimal division to see if the load factor of the table requires rehashing
+	*/
 	double real_size_decimal = (double) real_size;
 	double size_decimal = (double) size;
 	cout << endl;
@@ -72,12 +84,21 @@ void Hash::insert(Player* new_player) {
 	cout << real_size_decimal / size_decimal << endl;
 	cout << endl;
 	cout << "****************" << endl;
+
+	/*
+	* checks if the compacity of the hash table indeed needs rehashing and does just that with display messages notifying the user of the status of each action
+	* needed for this
+	*/
 	if (real_size_decimal/size_decimal >= 0.68) {
 		cout << "yes rehashing is happening" << " size: " << size << endl;
 		rehash();
 		display();
 		cout << "yes rehashing is happening" << " size: " << size << endl;
 	}
+
+	/*
+	* we then add the pointer originally requested into the hash table and display the name and the updated size to verify the function was successful
+	*/
 	int place = hashName(playerDatabase, new_player->getName(), size);
 	HashNode* new_node = new HashNode(new_player, false);
 	playerDatabase[place] = new_node;
@@ -238,6 +259,9 @@ Player* Hash::qbAssist(string first_name, string last_name, double ff_points) {
 void Hash::display() {
 	for (int i = 0; i < size; i++) {
 		if (playerDatabase[i] == nullptr) {
+			cout << "Index " << i << ": null" << endl;
+		}
+		else if (playerDatabase[i]->toRemove) {
 			cout << "Index " << i << ": null" << endl;
 		}
 		else {

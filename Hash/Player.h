@@ -9,6 +9,7 @@ using namespace std;
 #ifndef PLAYER_H
 #define PLAYER_H
 
+
 const double QB_FF_LOWERBOUND = 239;
 const double QB_FF_UPPERBOUND = 259;
 const double QB_PYD_LOWERBOUND = 3524;
@@ -350,6 +351,28 @@ public:
 
 
 	}
+
+	struct EqualFantasyPoints {
+		bool operator()(const Player& p1, const Player& p2) const {
+			return p1.ff_points == p2.ff_points;
+		}
+	};
+	
+	struct LessThanFantasyPoints {
+		bool operator()(const Player& p1, const Player& p2) const {
+			return p1.ff_points < p2.ff_points;
+		}
+	};
+
+	struct GreaterFantasyPoints {
+		bool operator()(const Player& p1, const Player& p2) const {
+			return p1.ff_points > p2.ff_points;
+		}
+	};
+
+	
+
+
 
 
 	void insertProsAndCons(double scores, string category) {

@@ -1273,7 +1273,7 @@ void BST::sortByViabilityHelper(string category, int beg, int end) {
 * pre condition: must have valid amount of teams and rounds thats not more than the players stored at the moment of mock drafting
 * post condition: displays a mock draft of the choices you made and the other AI ones
 */
-void BST::takeMockDraft(int teams, int rounds) {
+void BST::takeMockDraft(int teams, int rounds, int pick_number) {
 
 	int adpDifference = 0;
 	/*
@@ -1312,7 +1312,7 @@ void BST::takeMockDraft(int teams, int rounds) {
 	*/
 	for (int r = 0; r < teams; r++) {
 		for (int t = 0; t < rounds; t++) {
-			if (t == 0) {
+			if (t == pick_number) {
 				/*
 				* keeps asking for inout until the user chooses a player actually available and existent
 				*/
@@ -1353,10 +1353,6 @@ void BST::takeMockDraft(int teams, int rounds) {
 						int roundADPDifference = picks - tree_pick->player->getADP();
 						adpDifference += roundADPDifference;
 						picks++;
-
-
-
-
 					}
 				} while (invalid == true || duplicate == true || proscons == true);
 
@@ -1377,11 +1373,14 @@ void BST::takeMockDraft(int teams, int rounds) {
 
 				}
 			}
+			/*
+			* displays what the other teams picked after each round
+			*/
+			displayDraft(teams, rounds);
+			cout << endl;
 		}
-		/*
-		* displays what the other teams picked after each round
-		*/
-		displayDraft(teams, rounds);
+		
+
 
 
 	}
@@ -1392,8 +1391,8 @@ void BST::takeMockDraft(int teams, int rounds) {
 
 
 	for (int i = 0; i < teams; i++){
-		mock_draft[i][0]->display();
-		mock_draft[i][0]->playerEval(); 
+		mock_draft[i][pick_number]->display();
+		mock_draft[i][pick_number]->playerEval(); 
 		cout << "~~~~~~~~~~~~" << endl;
 	}
 	/*
@@ -1429,6 +1428,10 @@ string BST::adpEval(int adpDifference) {
 
 void BST::displayPlayerProsAndCons(string name) {
 	TreeNode* playerNode = search(name, root);
+	if (playerNode == nullptr) {
+		cout << "Player unavailable" << endl;
+		return;
+	}
 	playerNode->player->playerEval();
 }
 
