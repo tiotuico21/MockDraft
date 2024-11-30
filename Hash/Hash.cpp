@@ -10,6 +10,7 @@ using namespace std;
 Hash::Hash() {
 	this->size = 33;
 	this->real_size = 0;
+	this->remove_amount = 0;
 	this->prime = findNextPrime(size);
 	this->playerDatabase = vector<HashNode*>(size);
 }
@@ -39,10 +40,7 @@ int Hash::totalCharValue(string name) {
 
 	for (int i = 0; i < name_size; i++) {
 		char letter = name[i];
-		cout << letter << endl;
 		int value = (int)letter;
-		cout << "value " << value << endl;
-		cout << result << endl;
 		result = result + ((i + 1) * value);
 	}
 
@@ -124,6 +122,7 @@ void Hash::remove(string name) {
 	}
 	else {
 		remove_node->toRemove = true; 
+		remove_amount++;
 	}
 }
 
@@ -135,15 +134,11 @@ int Hash::doubleHash(int result, int place, int incrament, int hash_size) {
 	int temp = place;
 
 	if (playerDatabase[place] == nullptr) {
-		cout << "place: " << place << endl;
 		return place;
 	}
 	else {
 		int temp = doubleFormula(result, incrament);
-		cout << "double hash index: " << temp << endl;
 		if (playerDatabase[temp] == nullptr) {
-			cout << "^^^^^^^^^^^^" << endl;
-			cout << "place: " << place << endl;
 			return temp;
 		}
 		else {
@@ -252,6 +247,312 @@ void Hash::display() {
 	}
 }
 
+
+
+void Hash::save(string name) {
+	ofstream out_file(name);
+
+	if (!out_file) {
+		cout << "Can't open file" << endl;
+		return;
+	}
+
+	int saved_size = real_size - remove_amount;
+	out_file << saved_size << endl;
+	for (int i = 0; i < size; i++) {
+		if (playerDatabase[i] == nullptr) {
+			continue;
+		}
+		else if (playerDatabase[i]->toRemove) {
+			continue;
+		}
+		else {
+			out_file << playerDatabase[i]->player->to_export() << endl;
+		}
+	}
+	cout << "Save successful" << endl;
+}
+
+
+/*
+* description: function to parse data from a txt file of a player name and stats and add it to the tree
+* pre condition: must have a valid string line of stats to parse
+* post condition: adds the data if it is formatted and has the needed info, then returns true, otherwise
+* returns false
+*/
+bool Hash::add(string line) {
+
+	/*
+	* uses string stream to parse the data and a bool to flag if the input is bad
+	*/
+	stringstream stream(line);
+	bool good_input = true;
+
+
+	/*
+	* variables to hold the string info of the stats
+	*/
+	string first_name;
+	string last_name;
+	string position;
+	string string_depth;
+	string string_ff;
+	string string_passing_yards;
+	string string_rushing_yards;
+	string string_receiving_yards;
+	string string_passing_td;
+	string string_rushing_td;
+	string string_receiving_td;
+	string string_carries;
+	string string_receptions;
+	string string_targets;
+	string string_fumbles;
+	string string_interceptions;
+	string extra_input;
+
+	string string_ten;
+	string string_twenty;
+	string string_thirty;
+	string string_forty;
+	string string_fifty;
+	string string_fiftyPlus;
+	string string_miss;
+
+	string string_sacks;
+	string string_points_allowed;
+
+	/*
+	* non string variables to be filled and passed into the Player constructor to add them to the BST
+	*/
+	int depth;
+	double ff_points;
+	double passing_yards;
+	double rushing_yards;
+	double receiving_yards;
+	int passing_td;
+	int rushing_td;
+	int receiving_td;
+	int carries;
+	int receptions;
+	int targets;
+	int fumbles;
+	int interceptions;
+
+	int ten;
+	int twenty;
+	int thirty;
+	int forty;
+	int fifty;
+	int fiftyPlus;
+	int miss;
+
+	int sacks;
+	int points_allowed;
+
+
+	/*
+	* if there a info for a name and position then proceed, if not flag as bad input
+	*/
+	if (stream >> first_name && stream >> last_name && stream >> position) {
+
+		/*
+		* depending on the position make sure you have all the info and if so insert it into the BST and if not
+		* flag as bad input
+		*/
+		if (position == "QB") {
+
+			if (stream >> string_ff &&
+				stream >> string_passing_yards &&
+				stream >> string_rushing_yards &&
+				stream >> string_passing_td &&
+				stream >> string_rushing_td &&
+				stream >> string_fumbles &&
+				stream >> string_interceptions) {
+
+				if (stream >> extra_input) {
+					good_input = false;
+					return good_input;
+				}
+
+				/*
+				* converts string data to the correct numerical data type
+				*/
+				ff_points = stod(string_ff);
+				passing_yards = stod(string_passing_yards);
+				rushing_yards = stod(string_rushing_yards);
+				passing_td = stoi(string_passing_td);
+				rushing_td = stoi(string_rushing_td);
+				fumbles = stoi(string_fumbles);
+				interceptions = stoi(string_interceptions);
+
+				Player* new_player = new Player(first_name, last_name, position, ff_points, passing_yards, rushing_yards, passing_td, rushing_td, fumbles, interceptions);
+
+				insert(new_player);
+
+				new_player = nullptr;
+			}
+			else {
+				good_input = false;
+			}
+		}
+		else if (position == "RB" || position == "WR" || position == "TE") {
+			if (stream >> string_depth &&
+				stream >> string_ff &&
+				stream >> string_receiving_yards &&
+				stream >> string_rushing_yards &&
+				stream >> string_receiving_td &&
+				stream >> string_rushing_td &&
+				stream >> string_carries &&
+				stream >> string_receptions &&
+				stream >> string_targets &&
+				stream >> string_fumbles) {
+
+				if (stream >> extra_input) {
+					good_input = false;
+					return good_input;
+				}
+
+				depth = stoi(string_depth);
+				ff_points = stod(string_ff);
+				receiving_yards = stod(string_receiving_yards);
+				rushing_yards = stod(string_rushing_yards);
+				receiving_td = stoi(string_receiving_td);
+				rushing_td = stoi(string_rushing_td);
+				carries = stoi(string_carries);
+				receptions = stoi(string_receptions);
+				targets = stoi(string_targets);
+				fumbles = stoi(string_fumbles);
+
+				Player* new_player = new Player(first_name, last_name, position, depth, ff_points, receiving_yards, rushing_yards, receiving_td, rushing_td, carries, receptions, targets, fumbles);
+
+				insert(new_player);
+
+				new_player = nullptr;
+			}
+			else {
+				good_input = false;
+			}
+
+		}
+		else if (position == "K") {
+			if (stream >> string_ff &&
+				stream >> string_ten &&
+				stream >> string_twenty &&
+				stream >> string_thirty &&
+				stream >> string_forty &&
+				stream >> string_fifty &&
+				stream >> string_fiftyPlus &&
+				stream >> string_miss) {
+
+				if (stream >> extra_input) {
+					good_input = false;
+					return good_input;
+				}
+
+				ff_points = stod(string_ff);
+				ten = stoi(string_ten);
+				twenty = stoi(string_twenty);
+				thirty = stoi(string_thirty);
+				forty = stoi(string_forty);
+				fifty = stoi(string_fifty);
+				fiftyPlus = stoi(string_fiftyPlus);
+				miss = stoi(string_miss);
+
+				Player* new_player = new Player(first_name, last_name, position, ff_points, ten, twenty, thirty, forty, fifty, fiftyPlus, miss);
+				insert(new_player);
+				new_player = nullptr;
+			}
+			else {
+				good_input = false;
+			}
+		}
+		else if (position == "DEF") {
+			if (stream >> string_ff &&
+				stream >> string_interceptions &&
+				stream >> string_sacks &&
+				stream >> string_fumbles &&
+				stream >> string_points_allowed) {
+
+				if (stream >> extra_input) {
+					good_input = false;
+					return good_input;
+				}
+
+				ff_points = stod(string_ff);
+				interceptions = stoi(string_interceptions);
+				sacks = stoi(string_fumbles);
+				fumbles = stoi(string_fumbles);
+				points_allowed = stoi(string_points_allowed);
+
+
+				Player* new_player = new Player(first_name, last_name, position, ff_points, interceptions, sacks, fumbles, points_allowed);
+				insert(new_player);
+				new_player = nullptr;
+			}
+			else {
+				good_input = false;
+			}
+		}
+		else {
+			good_input = false;
+		}
+
+
+		return good_input;
+	}
+	return good_input;
+
+}
+
+void Hash::load(string name) {
+	ifstream in_file;
+	int new_size;
+	in_file.open(name);
+
+	if (!in_file) {
+		cout << "File failed to open" << endl;
+		return;
+	}
+	string line;
+
+	if (getline(in_file, line)) {
+		new_size = stoi(line);
+	}
+	else {
+		cout << "cannot find size" << endl;
+		return;
+	}
+	
+
+	cout << "destroying" << endl;
+	destroy();
+
+	remove_amount = 0;
+
+	if (new_size < 5) {
+		size = new_size * 10;
+	}
+	else if (new_size < 10) {
+		size = new_size * 5;
+	}
+	else {
+		size = new_size * 3;
+	}
+
+
+	cout << size << endl;
+
+	playerDatabase.resize(size, nullptr);
+
+	prime = findNextPrime(size);
+
+	while (getline(in_file, line)) {
+		add(line);
+	}
+
+	
+}
+
 void Hash::destroy() {
 	for (int i = 0; i < size; i++) {
 		if (playerDatabase[i] == nullptr) {
@@ -261,7 +562,14 @@ void Hash::destroy() {
 			Player* remove = playerDatabase[i]->player;
 			delete playerDatabase[i];
 			delete remove;
+			playerDatabase[i] = nullptr;
 			remove = nullptr;
 		}
 	}
+	playerDatabase.clear();
+	real_size = 0;
+}
+
+Hash::~Hash() {
+	destroy();
 }
