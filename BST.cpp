@@ -1273,13 +1273,20 @@ void BST::sortByViabilityHelper(string category, int beg, int end) {
 * pre condition: must have valid amount of teams and rounds thats not more than the players stored at the moment of mock drafting
 * post condition: displays a mock draft of the choices you made and the other AI ones
 */
-void BST::takeMockDraft(int teams, int rounds) {
+void BST::takeMockDraft(int teams, int rounds, int pick_number) {
 
 	int adpDifference = 0;
+
+	pick_number--;
+
+	if (pick_number >= teams) {
+		cout << "invalid pick number, generate mock again with appropriate pick number" << endl;
+		return;
+	}
 	/*
 	* allocates memory for 2D array of player pointers
 	*/
-	mock_draft = new Player * *[teams];
+	mock_draft = new Player * *[rounds];
 
 	/*
 	* tracks number of picks to allow AI to quickly no which player is appropriate to choose from where they are picjing
@@ -1300,9 +1307,9 @@ void BST::takeMockDraft(int teams, int rounds) {
 	/*
 	* allocate the inner arrays of the 2D array
 	*/
-	for (int i = 0; i < teams; i++) {
-		mock_draft[i] = new Player * [rounds];
-		for (int j = 0; j < rounds; j++) {
+	for (int i = 0; i < rounds; i++) {
+		mock_draft[i] = new Player * [teams];
+		for (int j = 0; j < teams; j++) {
 			mock_draft[i][j] = nullptr;
 		}
 	}
@@ -1310,9 +1317,9 @@ void BST::takeMockDraft(int teams, int rounds) {
 	/*
 	* loop allows the user to choose the pick then fills out the rest based off of the ranking array sorted by viability
 	*/
-	for (int r = 0; r < teams; r++) {
-		for (int t = 0; t < rounds; t++) {
-			if (t == 0) {
+	for (int r = 0; r < rounds; r++) {
+		for (int t = 0; t < teams; t++) {
+			if (t == pick_number) {
 				/*
 				* keeps asking for inout until the user chooses a player actually available and existent
 				*/
@@ -1377,11 +1384,13 @@ void BST::takeMockDraft(int teams, int rounds) {
 
 				}
 			}
+			/*
+			* displays what the other teams picked after each round
+			*/
+			displayDraft(teams, rounds);
+			cout << endl;
 		}
-		/*
-		* displays what the other teams picked after each round
-		*/
-		displayDraft(teams, rounds);
+
 
 
 	}
@@ -1392,19 +1401,19 @@ void BST::takeMockDraft(int teams, int rounds) {
 
 
 	for (int i = 0; i < teams; i++){
-		mock_draft[i][0]->display();
-		mock_draft[i][0]->playerEval(); 
+		mock_draft[i][pick_number]->display();
+		mock_draft[i][pick_number]->playerEval(); 
 		cout << "~~~~~~~~~~~~" << endl;
 	}
 	/*
 	* deallocates the 2D array being careful not to delete the pointers
 	*/
-	for (int i = 0; i < teams; i++) {
-		for (int j = 0; j < rounds; j++) {
+	for (int i = 0; i < rounds; i++) {
+		for (int j = 0; j < teams; j++) {
 			mock_draft[i][j]->setStatus();
 		}
 	}
-	for (int i = 0; i < teams; i++) {
+	for (int i = 0; i < rounds; i++) {
 		delete[] mock_draft[i];
 	}
 	delete[] mock_draft;
@@ -1438,8 +1447,8 @@ void BST::displayPlayerProsAndCons(string name) {
 * post condition: displays the draft results
 */
 void BST::displayDraft(int teams, int rounds) {
-	for (int i = 0; i < teams; i++) {
-		for (int j = 0; j < rounds; j++) {
+	for (int i = 0; i < rounds; i++) {
+		for (int j = 0; j < teams; j++) {
 			if (mock_draft[i][j] != nullptr) {
 				cout << mock_draft[i][j]->getName() << " | ";
 			}
