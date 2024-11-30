@@ -246,7 +246,7 @@ public:
 
 		if (position == "WR" || position == "TE") {
 			this->viability = (ff_points) + (receiving_yards)+(rushing_yards * 1.02) + (receiving_td * 6) +
-				(rushing_td * 6.3) + (carries * 1.3) + (receptions * 1.50) + (targets * 1.25) - fumbles - depth * 200;
+				(rushing_td * 6.28) + (carries * 1.01) + (receptions * 1.50) + (targets * 1.25) - fumbles - depth * 200;
 		}
 		else {
 			this->viability = ff_points + (rushing_yards)+(receiving_yards * 1.02) + (rushing_td * 6) +

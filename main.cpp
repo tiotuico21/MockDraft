@@ -32,8 +32,10 @@ int main() {
 		string category;
 		string string_teams;
 		string string_rounds;
+		string string_pick_number;
 		int teams;
 		int rounds;
+		int pick_number;
 		bool mock_draft = false;
 
 		stream >> word;
@@ -131,14 +133,15 @@ int main() {
 				list.save(name);
 			}
 		}
-		else if (word == "mock" && stream >> string_teams && stream >> string_rounds) {
+		else if (word == "mock" && stream >> string_teams && stream >> string_rounds && stream >> string_pick_number) {
 			if (stream >> extra_input) {
 				bad_input = true;
 			}
 			else {
 				teams = stoi(string_teams);
 				rounds = stoi(string_rounds);
-				list.takeMockDraft(teams, rounds);
+				pick_number = stoi(string_pick_number);
+				list.takeMockDraft(teams, rounds, pick_number);
 			}
 		}
 		else if (word == "directions") {
