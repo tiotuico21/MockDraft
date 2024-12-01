@@ -79,7 +79,7 @@ public:
 	void save(string name);
 	void pubDestroy();
 	int randomizedPartition(string category, int beg, int end);
-	void sortByViability(string category);
+	void sortByCategory(string category);
 
 	void takeMockDraft(int teams, int rounds, int pick_number);
 	void displayDraft(int teams, int rounds);
