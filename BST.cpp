@@ -96,6 +96,12 @@ void BST::pubDisplay() {
 	display(root);
 }
 
+
+/*
+* description: public function to display the array responsible for player ranking
+* pre condtion: must have an already allocated array for player ranking
+* post condtion: displays the contents of ranking
+*/
 void BST::rankingDisplay() {
 	int i = 0;
 	cout << "Player ranking" << endl;
@@ -330,9 +336,17 @@ void BST::pubSuccessor(string name) {
 	}
 }
 
-//at first didnt cover uniinitalized values and assigned misaligned 
+/*
+* description: function to remove the player pointer in the array as well and resize it
+* pre condition: given a string name to know which player to remove
+* post condition: removes the player pointer and maintains the correct size 
+*/
 void BST::removeInArray(string name) {
 	int temp_index = 0;
+
+	/*
+	* find the given player to remove 
+	*/
 	for (int i = 0; i < player_amount; i++) {
 		if (ranking[i]->getName() == name) {
 			temp_index = i;
@@ -340,10 +354,16 @@ void BST::removeInArray(string name) {
 		}
 	}
 
-	if (player_amount - 1 == 0 || player_amount - 1 == 1) {
+	/*
+	* if there is only one entry simply make it nullptr as the player pointer itself gets properly deallocated using the remove function
+	*/
+	if (player_amount - 1 == 0) {
 		ranking[player_amount - 1] = nullptr;
 		return;
 	}
+	/*
+	* else shift each player after the player we want to remove back one to maintain the correct order 
+	*/
 	for (int j = temp_index; j < player_amount - 1; j++) {
 		ranking[j + 1]->decramentADP();
 		ranking[j] = ranking[j + 1];
