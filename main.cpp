@@ -96,7 +96,7 @@ int main() {
 		}
 		else if (word == "sort" && stream >> category) {
 			if (!(stream >> extra_input)) {
-				list.sortByViability(category);
+				list.sortByCategory(category);
 				list.rankingDisplay();
 			}
 			else {

@@ -799,6 +799,11 @@ bool BST::add(string line) {
 
 }
 
+/*
+* description: user assistance that gives the user prompts for inputting each statline to add a new player to the data set
+* pre condition: none
+* post condition: makes a player pointer and inserts it into the data set
+*/
 void BST::assist() {
 	string first_name;
 	string last_name;
@@ -806,18 +811,16 @@ void BST::assist() {
 	double ff_points;
 	
 	/*
-
-
-	
-
-
+	* asks for the name of the player 
 	*/
-
 	cout << "First Name: ";
 	cin >> first_name;
 	cout << "Last Name: ";
 	cin >> last_name;
 
+	/*
+	* asks for the position of the player 
+	*/
 	do {
 		cout << "Position: ";
 		cin >> position;
@@ -828,11 +831,17 @@ void BST::assist() {
 		position != "K" &&
 		position != "DEF");
 
+	/*
+	* gets the amount of fantasy points 
+	*/
 	do {
 		cout << "Fantasy Football Points: ";
 		cin >> ff_points;
 	} while (ff_points < 0);
 
+	/*
+	* declares the new Player pointer and then depending on the position calls the appropriate function to assist to make such position player
+	*/
 	Player* new_player = nullptr;
 	if (position == "QB") {
 		new_player = qbAssist(first_name, last_name, ff_points);
@@ -849,6 +858,11 @@ void BST::assist() {
 	root = insert(new_player, root);
 }
 
+/*
+* description: user assistance to make a new entry for a quarterback
+* pre condition: takes a first name, a last name, and the fantasy points they have 
+* post condition: returns a Player pointer for this quarterback
+*/
 Player* BST::qbAssist(string first_name, string last_name, double ff_points) {
 
 	double passing_yards;
@@ -858,6 +872,9 @@ Player* BST::qbAssist(string first_name, string last_name, double ff_points) {
 	int fumbles;
 	int interceptions;
 
+	/*
+	* do while loops to ensure input validation
+	*/
 	do {
 		cout << "Passing Yards: ";
 		cin >> passing_yards;
@@ -894,6 +911,11 @@ Player* BST::qbAssist(string first_name, string last_name, double ff_points) {
 	return new_player;
 }
 
+/*
+* description: user assistance to make a new entry for a running back, wide receiver, tight end 
+* pre condition: takes a first name, a last name, the position they are and the fantasy points they have
+* post condition: returns a Player pointer for this given position player 
+*/
 Player* BST::offenseAssist(string first_name, string last_name, string position, double ff_points) {
 	int depth;
 	double receiving_yards;
@@ -904,6 +926,10 @@ Player* BST::offenseAssist(string first_name, string last_name, string position,
 	int receptions; 
 	int targets;
 	int fumbles;
+
+	/*
+	* do while loops to ensure input validation
+	*/
 
 	do {
 		cout << "Depth Position: ";
@@ -956,6 +982,11 @@ Player* BST::offenseAssist(string first_name, string last_name, string position,
 
 }
 
+/*
+* description: user assistance to make a new entry for a kicker 
+* pre condition: takes a first name, a last name, and their amount of fantasy football points 
+* post condition: returns a Player pointer for this given position player
+*/
 Player* BST::kickerAssist(string first_name, string last_name, double ff_points) {
 	int ten;
 	int twenty;
@@ -965,6 +996,9 @@ Player* BST::kickerAssist(string first_name, string last_name, double ff_points)
 	int fifty_plus;
 	int miss;
 
+	/*
+	* do while loops to ensure input validation
+	*/
 	do {
 		cout << "Kicks Made From the Ten Yard Line: ";
 		cin >> ten;
@@ -1012,12 +1046,20 @@ Player* BST::kickerAssist(string first_name, string last_name, double ff_points)
 
 }
 
+/*
+* description: user assistance to make a new entry for a defense 
+* pre condition: takes a first name, a last name, and their amount of fantasy football points
+* post condition: returns a Player pointer for this given position player
+*/
 Player* BST::defenseAssist(string city, string team, double ff_points) {
 	int interceptions;
 	int sacks;
 	int fumbles;
 	int points_allowed;
 
+	/*
+	* do while loops to ensure user validation
+	*/
 	do {
 		cout << "Interceptions: ";
 		cin >> interceptions;
@@ -1237,7 +1279,7 @@ int BST::randomizedPartition(string category, int beg, int end) {
 * pre condition: must have a valid string category
 * post condition: a sorted array off of the given category
 */
-void BST::sortByViability(string category) {
+void BST::sortByCategory(string category) {
 	sortByViabilityHelper(category, 0, player_amount - 1);
 }
 
@@ -1265,12 +1307,11 @@ void BST::sortByViabilityHelper(string category, int beg, int end) {
 		sortByViabilityHelper(category, pivotIndex + 1, end);
 	}
 }
-//need feature that reverts the player sorting 
-//switch to rounds and teams
 
 /*
 * description: actual function to simulate the mock draft
 * pre condition: must have valid amount of teams and rounds thats not more than the players stored at the moment of mock drafting
+* and a pick number less than or equal to amount of teams 
 * post condition: displays a mock draft of the choices you made and the other AI ones
 */
 void BST::takeMockDraft(int teams, int rounds, int pick_number) {
@@ -1301,8 +1342,8 @@ void BST::takeMockDraft(int teams, int rounds, int pick_number) {
 	bool proscons = false; 
 	string player_name;
 	TreeNode* tree_pick = nullptr;
-	sortByViability("v");
-	rankingDisplay();
+	sortByCategory("v");
+	rankingDisplay(); 
 
 	/*
 	* allocate the inner arrays of the 2D array
@@ -1422,6 +1463,11 @@ void BST::takeMockDraft(int teams, int rounds, int pick_number) {
 
 }
 
+/*
+* description: Takes the total ADP difference or expected draft position vs where the user drafted them and gives a pre written message
+* pre condition: int of the ADP difference calculated in the mock draft function
+* post condition: displays a message based in the ADP difference 
+*/
 string BST::adpEval(int adpDifference) {
 	string message;
 	if (adpDifference < 0) {
@@ -1436,8 +1482,17 @@ string BST::adpEval(int adpDifference) {
 	return message;
 }
 
+/*
+* description: Gives the pros and cons of a player based on their stats
+* pre condition: string of the last name of a player
+* post condition: displays the pros and cons of a given player 
+*/
 void BST::displayPlayerProsAndCons(string name) {
 	TreeNode* playerNode = search(name, root);
+	if (playerNode == nullptr) {
+		cout << "Player not available" << endl;
+		return;
+	}
 	playerNode->player->playerEval();
 }
 
@@ -1479,6 +1534,11 @@ void BST::destroy(TreeNode* root) {
 	}
 }
 
+/*
+* description: displays the directions of commands to use for this interface
+* pre condition: none
+* post condition: displays directions
+*/
 void BST::displayDirections() {
 	cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
 	cout << endl;
@@ -1507,7 +1567,7 @@ void BST::displayDirections() {
 	cout << "----------------------------------------------------------------------------------------------" << endl;
 	cout << "Type ranking to show the players sorted by the category you last requsted" << endl;
 	cout << "----------------------------------------------------------------------------------------------" << endl;
-	cout << "Type mock plus the amount of rounds and teams you want- do not go over how many players you actually have in the database" << endl;
+	cout << "Type mock plus the amount of rounds and teams and pick position you want- do not go over how many players you actually have in the database" << endl;
 	cout << "   -as you do the mock draft type the last name of the players you want" << endl;
 	cout << "   -the interface will keep asking for a player if you give one that has been taken or unexistent" << endl;
 	cout << endl;
